@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ScriptsSQL\000ClearTables.sql" />
+    <None Remove="ScriptsSQL\001CreateDB.sql" />
+    <None Remove="ScriptsSQL\002CreateItemsTable.sql" />
+    <None Remove="ScriptsSQL\003CreateRolesTable.sql" />
+    <None Remove="ScriptsSQL\004CreateUsersTable.sql" />
+    <None Remove="ScriptsSQL\005CreateCartsTable.sql" />
+    <None Remove="ScriptsSQL\006CreateItemCartsTable.sql" />
+    <None Remove="ScriptsSQL\CreateTables\007CreateModifiedTrigers.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\001ClearTables.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\003CreateAccountsTable.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\007CreateModifiedTrigers.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\004CreateTransactionsTable.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateUsersTable.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateDBs\000CreateDB.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-postgresql" Version="5.0.37" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
+  </ItemGroup>
+
+</Project>
