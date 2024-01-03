@@ -1,6 +1,6 @@
 using DbUp;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace BestShopEverDBEditor;
 

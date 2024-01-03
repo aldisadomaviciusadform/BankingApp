@@ -1,13 +1,8 @@
-﻿using Application.Dto.Accounts;
-using Application.Dto.Transactions;
+﻿using Application.Dto.Transactions;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -88,7 +83,7 @@ public class TransactionService
     {
         TransactionEntity transactionEntity = await _transactionRepository.Get(id) ?? throw new NotFoundException("Transaction not found in DB");
 
-        Transaction transaction = new ()
+        Transaction transaction = new()
         {
             Id = transactionEntity.Id,
             Type = transactionEntity.Type,
@@ -100,8 +95,6 @@ public class TransactionService
         return transaction;
     }
 
-    const decimal TransactionFee = 1;
-
     public async Task CreateTransaction(Guid senderId, TransactionSend transaction)
     {
         IDbTransaction dbTransaction = _transactionRepository.StartTransaction();
@@ -109,44 +102,12 @@ public class TransactionService
         if (transaction.Amount <= 0.01m)
             throw new ArgumentException("Send amount cant be less or equal zero");
 
-        AccountEntity accountSender = await _accountRepository.Get(senderId) ?? throw new NotFoundException("Account not found in DB");
-        AccountEntity accountReceiver = await _accountRepository.Get(transaction.ReceiverAccount) ?? throw new NotFoundException("Account not found in DB");
-
-        if (accountSender.Balance < (TransactionFee + transaction.Amount))
-            throw new ArgumentException("Insufficient balance");
-
-        accountSender.Balance -= (TransactionFee + transaction.Amount);
-        await _accountRepository.UpdateAmount(accountSender, dbTransaction);
-        TransactionEntity transactionSend = new()
-        {
-            Type = TransactionType.Send,
-            Amount = -transaction.Amount,
-            AccountId = senderId,
-        };
-
-        await _accountRepository.UpdateAmount(accountReceiver, dbTransaction);
-        await _transactionRepository.Add(transactionSend, dbTransaction);
-
-        accountReceiver.Balance += transaction.Amount;
-        await _accountRepository.UpdateAmount(accountSender, dbTransaction);
-        TransactionEntity transactionReceive = new()
-        {
-            Type = TransactionType.Received,
-            Amount = transaction.Amount,
-            AccountId = transaction.ReceiverAccount,
-        };
-
-        await _accountRepository.UpdateAmount(accountReceiver, dbTransaction);
-        await _transactionRepository.Add(transactionReceive, dbTransaction);
-
-        TransactionEntity transactionServiceFee = new()
-        {
-            Type = TransactionType.Fee,
-            Amount = TransactionFee,
-            AccountId = senderId,
-        };
-
-        await _transactionRepository.Add(transactionServiceFee, dbTransaction);
+        Task.WaitAll
+        (
+            SendTransaction(senderId, transaction.Amount, dbTransaction),
+            ReceiveTransaction(transaction.ReceiverAccount, transaction.Amount, dbTransaction),
+            ServiceFeeTransaction(senderId, dbTransaction)
+        );
 
         try
         {
@@ -156,23 +117,63 @@ public class TransactionService
         {
             dbTransaction.Rollback();
             throw;
-        }
-
+        } 
     }
 
-    private async Task SendTransaction(Guid accountId, decimal amount)
+    const decimal TransactionFee = 1;
+    private async Task SendTransaction(Guid accountId, decimal amount, IDbTransaction dbTransaction)
     {
+        AccountEntity accountSender = await _accountRepository.Get(accountId) ?? throw new NotFoundException("Account not found in DB");
+        if (accountSender.Balance < (TransactionFee + amount))
+            throw new ArgumentException("Insufficient balance");
 
+        accountSender.Balance -= (TransactionFee + amount);
+        await _accountRepository.UpdateAmount(accountSender, dbTransaction);
+        TransactionEntity transactionSend = new()
+        {
+            Type = TransactionType.Send,
+            Amount = -amount,
+            AccountId = accountId,
+        };
+
+        Task.WaitAll
+        (
+            _transactionRepository.Add(transactionSend, dbTransaction),
+            _accountRepository.UpdateAmount(accountSender, dbTransaction)
+        );
     }
 
-    private async Task RecieveTransaction(Guid accountId, decimal amount)
+    private async Task ReceiveTransaction(Guid accountId, decimal amount, IDbTransaction dbTransaction)
     {
+        AccountEntity accountReceiver = await _accountRepository.Get(accountId) ?? throw new NotFoundException("Account not found in DB");
 
+        accountReceiver.Balance += amount;
+        await _accountRepository.UpdateAmount(accountReceiver, dbTransaction);
+
+        TransactionEntity transactionReceive = new()
+        {
+            Type = TransactionType.Received,
+            Amount = amount,
+            AccountId = accountId,
+        };
+
+        Task.WaitAll
+        (
+            _accountRepository.UpdateAmount(accountReceiver, dbTransaction),
+            _transactionRepository.Add(transactionReceive, dbTransaction)
+        );
     }
 
-    private async Task ServiceFeeTransaction(Transaction transaction)
+    private async Task ServiceFeeTransaction(Guid accountId, IDbTransaction dbTransaction)
     {
+        TransactionEntity transactionServiceFee = new()
+        {
+            Type = TransactionType.Fee,
+            Amount = TransactionFee,
+            AccountId = accountId,
+        };
 
+        await _transactionRepository.Add(transactionServiceFee, dbTransaction);
     }
 
     public async Task TopUpTransaction(Guid accountId, TopUp topUp)

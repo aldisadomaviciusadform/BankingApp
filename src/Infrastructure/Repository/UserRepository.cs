@@ -1,5 +1,4 @@
-﻿using Application.Dto.Users;
-using Dapper;
+﻿using Dapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using System.Data;
@@ -17,10 +16,7 @@ public class UserRepository : IUserRepository
 
     public async Task<UserEntity?> Get(Guid id)
     {
-        var queryArguments = new
-        {
-            Id = id
-        };
+        var queryArguments = new { Id = id };
 
         string sql = @"SELECT * FROM users
                             WHERE id=@Id AND is_deleted=false";
@@ -57,10 +53,7 @@ public class UserRepository : IUserRepository
 
     public async Task Delete(Guid id)
     {
-        var queryArguments = new
-        {
-            Id = id
-        };
+        var queryArguments = new { Id = id };
 
         string sql = @"UPDATE users
                             SET is_deleted=true

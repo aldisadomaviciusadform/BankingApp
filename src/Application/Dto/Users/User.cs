@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Xml.Linq;
-
-namespace Application.Dto.Users;
+﻿namespace Application.Dto.Users;
 
 public class User
 {

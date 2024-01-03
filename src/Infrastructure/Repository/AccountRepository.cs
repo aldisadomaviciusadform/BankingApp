@@ -1,9 +1,7 @@
-﻿using Application.Dto.Accounts;
-using Dapper;
+﻿using Dapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using System.Data;
-using System.Security.Principal;
 
 namespace Infrastructure.Repository;
 
@@ -66,7 +64,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task Delete(Guid id)
     {
-        var queryArguments = new{Id = id};
+        var queryArguments = new { Id = id };
 
         string sql = @"UPDATE accounts
                             SET is_deleted=true
@@ -81,7 +79,7 @@ public class AccountRepository : IAccountRepository
                             SET balance=@Balance
                             WHERE id=@Id AND is_deleted=false";
 
-        await _dbConnection.ExecuteAsync(sql, account,dbTransaction);
+        await _dbConnection.ExecuteAsync(sql, account, dbTransaction);
     }
 
     public IDbTransaction StartTransaction()

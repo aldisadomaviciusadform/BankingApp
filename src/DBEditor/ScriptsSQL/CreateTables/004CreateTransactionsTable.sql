@@ -13,4 +13,6 @@
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
+
+    CREATE UNIQUE INDEX index_account_id ON transactions(account_id);
 )

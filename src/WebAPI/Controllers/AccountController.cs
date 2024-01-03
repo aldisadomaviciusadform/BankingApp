@@ -1,6 +1,5 @@
 ﻿using Application.Dto.Accounts;
 using Application.Dto.Transactions;
-using Application.Dto.Users;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

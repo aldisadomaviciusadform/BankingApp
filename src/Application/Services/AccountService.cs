@@ -1,5 +1,4 @@
 ﻿using Application.Dto.Accounts;
-using Application.Dto.Users;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;

@@ -1,7 +1,4 @@
-﻿using Application.Dto.Accounts;
-using Application.Dto.Transactions;
-using Application.Dto.Users;
-using Application.Services;
+﻿using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
@@ -20,7 +17,7 @@ public class TransactionController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-//        throw new UnauthorizedAccessException("Get all transactions");
+        //        throw new UnauthorizedAccessException("Get all transactions");
         return Ok(await _transactionService.Get());
     }
 
@@ -28,5 +25,5 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> Get(Guid id)
     {
         return Ok(await _transactionService.Get(id));
-    }    
+    }
 }

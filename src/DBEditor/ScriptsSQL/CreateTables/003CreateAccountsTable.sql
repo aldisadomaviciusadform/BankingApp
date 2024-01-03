@@ -17,4 +17,6 @@
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
+    
+    CREATE UNIQUE INDEX index_user_id ON accounts(user_id);
 )
