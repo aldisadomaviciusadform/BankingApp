@@ -5,8 +5,8 @@ BEGIN
    		NEW.modified := CURRENT_TIMESTAMP;
 	END IF;
 	
-   	IF NEW."modifiedBy" IS NULL THEN
-   		NEW."modifiedBy" := NEW."createdBy";
+   	IF NEW.modified_by IS NULL THEN
+   		NEW.modified_by := NEW.created_by;
 	END IF;
 
    RETURN NEW;

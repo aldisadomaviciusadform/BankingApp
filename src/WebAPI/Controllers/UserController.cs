@@ -1,27 +1,24 @@
-using Application.Dtos.Users;
+using Application.Dto.Users;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
-/// <summary>
-/// This is a sample controller for demonstrating XML comments in ASP.NET Core.
-/// </summary>
 [ApiController]
 [Route("v1/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly AccountService _accountService;
+    private readonly TransactionService _transactionService;
 
-    public UserController(UserService userService)
+    public UserController(UserService userService, AccountService accountService, TransactionService transactionService)
     {
         _userService = userService;
+        _accountService = accountService;
+        _transactionService = transactionService;
     }
 
-    /// <summary>
-    /// Gets all items
-    /// </summary>
-    /// <returns>list of items</returns>
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -32,6 +29,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Get(Guid id)
     {
         return Ok(await _userService.Get(id));
+    }
+
+    [HttpGet("{id}/accounts")]
+    public async Task<IActionResult> GetUserAccounts(Guid id)
+    {
+        return Ok(await _accountService.GetUserAccounts(id));
     }
 
     [HttpPost]
@@ -53,5 +56,11 @@ public class UserController : ControllerBase
     {
         await _userService.Delete(id);
         return Ok();
+    }
+
+    [HttpGet("{id}/transactions")]
+    public async Task<IActionResult> GetUsersTransactions(Guid id)
+    {
+        return Ok(await _transactionService.GetUsersTransactions(id));
     }
 }

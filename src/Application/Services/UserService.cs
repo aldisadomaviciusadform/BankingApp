@@ -1,4 +1,4 @@
-﻿using Application.Dtos.Users;
+﻿using Application.Dto.Users;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -36,11 +36,11 @@ public class UserService
         if (!usersEntities.Any())
             return [];
 
-        users = usersEntities.Select(u => new User()
+        users = usersEntities.Select(o => new User()
         {
-            Id = u.Id,
-            Name = u.Name,
-            Address = u.Address,
+            Id = o.Id,
+            Name = o.Name,
+            Address = o.Address,
         }).ToList();
 
         return users;

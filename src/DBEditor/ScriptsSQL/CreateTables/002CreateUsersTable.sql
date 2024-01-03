@@ -1,10 +1,10 @@
 ﻿CREATE TABLE IF NOT EXISTS public.users
 (
     created timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdBy" character varying(50) COLLATE pg_catalog."default" NOT NULL  DEFAULT 'a'::character varying,
-    "isDeleted" boolean DEFAULT false,
+    created_by character varying(50) COLLATE pg_catalog."default" NOT NULL  DEFAULT 'a'::character varying,
+    is_deleted boolean DEFAULT false,
     modified timestamp without time zone,
-    "modifiedBy" character varying(50) COLLATE pg_catalog."default",    
+    modified_by character varying(50) COLLATE pg_catalog."default",    
 
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     name character varying(50) COLLATE pg_catalog."default" NOT NULL,

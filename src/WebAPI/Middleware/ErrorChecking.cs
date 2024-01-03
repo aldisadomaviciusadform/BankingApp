@@ -29,6 +29,10 @@ public class ErrorChecking
 
             switch (e)
             {
+                case UnauthorizedAccessException:
+                    message = "Use higher authorization level";
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    break;
                 case NotImplementedException:
                     message = "Not implemented";
                     statusCode = StatusCodes.Status501NotImplemented;
@@ -52,6 +56,10 @@ public class ErrorChecking
                 case DbException:
                     message = "Database error";
                     statusCode = StatusCodes.Status500InternalServerError;
+                    break;
+                case LimitReachedException:
+                    message = "Can't add another, limit exceeded";
+                    statusCode = StatusCodes.Status400BadRequest;
                     break;
                 default:
                     message = "General error";

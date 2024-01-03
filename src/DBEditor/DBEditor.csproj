@@ -24,7 +24,6 @@
     <EmbeddedResource Include="ScriptsSQL\CreateTables\007CreateModifiedTrigers.sql" />
     <EmbeddedResource Include="ScriptsSQL\CreateTables\004CreateTransactionsTable.sql" />
     <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateUsersTable.sql" />
-    <EmbeddedResource Include="ScriptsSQL\CreateDBs\000CreateDB.sql" />
   </ItemGroup>
 
   <ItemGroup>

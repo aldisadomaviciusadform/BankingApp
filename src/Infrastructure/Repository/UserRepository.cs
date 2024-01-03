@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Application.Dto.Users;
+using Dapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using System.Data;
@@ -21,31 +22,37 @@ public class UserRepository : IUserRepository
             Id = id
         };
 
-        return await _dbConnection.QuerySingleAsync<UserEntity>("SELECT * FROM items" +
-                                                " WHERE id=@Id AND \"isDeleted\"=false", queryArguments);
+        string sql = @"SELECT * FROM users
+                            WHERE id=@Id AND is_deleted=false";
+
+        return await _dbConnection.QuerySingleOrDefaultAsync<UserEntity>(sql, queryArguments);
     }
 
     public async Task<IEnumerable<UserEntity>> Get()
     {
-        return await _dbConnection.QueryAsync<UserEntity>("SELECT * FROM items" +
-                                                " WHERE \"isDeleted\"=false");
+        string sql = @"SELECT * FROM users
+                            WHERE is_deleted=false";
+
+        return await _dbConnection.QueryAsync<UserEntity>(sql);
     }
 
-    public async Task<Guid> Add(UserEntity item)
+    public async Task<Guid> Add(UserEntity user)
     {
-        string sql = $"INSERT INTO items" +
-                        " (name, price, \"shopId\")" +
-                        " VALUES (@Name, @Price, @ShopId)" +
-                        "RETURNING id";
+        string sql = @"INSERT INTO users
+                            (name, address)
+                            VALUES (@Name, @Address)
+                            RETURNING id";
 
-        return await _dbConnection.ExecuteScalarAsync<Guid>(sql, item);
+        return await _dbConnection.ExecuteScalarAsync<Guid>(sql, user);
     }
 
-    public async Task<int> Update(UserEntity item)
+    public async Task<int> Update(UserEntity user)
     {
-        return await _dbConnection.ExecuteAsync("UPDATE items" +
-                                        " SET name=@Name,price=@Price,\"shopId\"=@ShopId" +
-                                        " WHERE id=@Id AND \"isDeleted\"=false", item);
+        string sql = @"UPDATE users
+                            SET name=@Name, address=@Address
+                            WHERE id=@Id AND is_deleted=false";
+
+        return await _dbConnection.ExecuteAsync(sql, user);
     }
 
     public async Task Delete(Guid id)
@@ -55,8 +62,10 @@ public class UserRepository : IUserRepository
             Id = id
         };
 
-        await _dbConnection.ExecuteAsync("UPDATE items" +
-                                        " SET \"isDeleted\"=true" +
-                                        " WHERE id=@Id AND \"isDeleted\"=false", queryArguments);
+        string sql = @"UPDATE users
+                            SET is_deleted=true
+                            WHERE id=@Id AND is_Deleted=false";
+
+        await _dbConnection.ExecuteAsync(sql, queryArguments);
     }
 }

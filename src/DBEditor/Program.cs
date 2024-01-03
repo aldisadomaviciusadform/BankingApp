@@ -1,8 +1,9 @@
 using DbUp;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 namespace BestShopEverDBEditor;
-using Microsoft.Extensions.Configuration;
+
 
 internal class Program
 {
@@ -13,7 +14,6 @@ internal class Program
                 .PostgresqlDatabase(dbConnectionString)
                 .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), name => name.Contains(scriptFilter))
                 .WithVariablesEnabled()
-                .WithVariable("name", Directory.GetCurrentDirectory())
                 .LogToConsole()
                 .Build();
 
@@ -30,7 +30,7 @@ internal class Program
         return true;
     }
 
-    static int Main(string[] args)
+    static int Main()
     {
         Console.Clear();
 
@@ -44,12 +44,7 @@ internal class Program
         IConfiguration config = builder.Build();
         string dbConnectionString = config.GetSection("ConnectionStrings").GetValue<string>("PostgreConnection") ?? throw new ArgumentNullException();
 
-        string connectionString = dbConnectionString.Substring(0, dbConnectionString.IndexOf("Database"));
-
-        Console.WriteLine();
-        Console.WriteLine("DB creation scripts");
-        if (!ExecuteScripts(connectionString, "ScriptsSQL.CreateDBs."))
-            return -1;
+        EnsureDatabase.For.PostgresqlDatabase(dbConnectionString);
 
         Console.WriteLine();
         Console.WriteLine("DB tables edit");

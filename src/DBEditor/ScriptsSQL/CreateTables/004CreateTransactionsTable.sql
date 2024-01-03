@@ -5,10 +5,10 @@
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     type character varying(50) COLLATE pg_catalog."default" NOT NULL,
     amount money NOT NULL DEFAULT 0,
-    accountId uuid NOT NULL,
+    account_id uuid NOT NULL,
 
-    CONSTRAINT pkey_transactions PRIMARY KEY (id),
-    CONSTRAINT "fk_transactions_accountId" FOREIGN KEY (accountId)
+    CONSTRAINT "pkey_transactions" PRIMARY KEY (id),
+    CONSTRAINT "fk_transactions_accountId" FOREIGN KEY (account_id)
         REFERENCES public.accounts (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
